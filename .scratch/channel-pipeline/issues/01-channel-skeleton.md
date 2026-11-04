@@ -4,10 +4,10 @@
 
 **Blocked by:** None (can start immediately).
 
-**Status:** ready-for-agent
+**Status:** done
 
-- [ ] A `.guix-channel` file exists at the repo root.
-- [ ] A package module defines one trivial custom package.
-- [ ] A `channels.scm` pins the exact upstream `guix` commit.
-- [ ] A `manifest.scm` names the tracer package as the build set.
-- [ ] A user can add the channel, run `guix pull`, and build and install the package from source.
+- [x] A `.guix-channel` file exists at the repo root.
+- [x] A package module defines one trivial custom package.
+- [x] A `channels.scm` pins the exact upstream `guix` commit.
+- [x] A `manifest.scm` names the tracer package as the build set.
+- [x] A user can add the channel, run `guix pull`, and build and install the package from source.
