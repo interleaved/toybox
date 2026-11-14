@@ -1,0 +1,9 @@
+;; Keys authorized to sign commits on the public channel.  See docs/adr/0008 and
+;; ticket 06a.  The primary (2226...) anchors the introduction and signs the
+;; bootstrap commit; the signing subkey (4A09...) signs the mirror's commits.
+(authorizations
+ (version 0)
+ (("2226989B89854EF0346736FB06A005113B4F5784"
+   (name "interleaved/toybox-private"))
+  ("4A09A24A78FF033B9EE1B375062838B8071231E2"
+   (name "interleaved channel signing subkey"))))

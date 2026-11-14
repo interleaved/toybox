@@ -1,0 +1,6 @@
+;; Channel metadata for the interleaved-guix channel.
+;; Package modules live under the modules/ directory, which keeps them
+;; separate from the helper scripts (channels.scm, manifest.scm) at the root.
+(channel
+  (version 0)
+  (directory "modules"))
