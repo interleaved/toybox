@@ -1,5 +1,9 @@
 # Interleaved Guix Channel
 
+<p align="center">
+  <img src="https://cdn.interleaved.io/report/assets/big_logo.avif" alt="interleaved/toybox" width="200">
+</p>
+
 A Guix channel of custom package definitions on top of upstream Guix.
 
 ## Channel authentication
@@ -63,3 +67,16 @@ Keep `https://ci.guix.gnu.org` in the list, because this server carries only
 the channel's own packages. To make the change permanent, add the URL to the
 guix-daemon substitute URLs. See the Guix manual section on substitute server
 authorization.
+
+## Build status
+
+The pipeline builds and signs the channel, then publishes a status page.
+
+[The build report](https://status.interleaved.io/) shows every day the pipeline
+ran, each run, and each package.
+
+The SHAs on the status page do not match the commits you pull. The status page
+reports the commits of the source repository, where the builds run. The public
+channel is a signed snapshot mirror of that repository. Each snapshot is a fresh
+commit with its own SHA, and its commit message names the source commit it
+mirrors. So a channel commit and a build SHA differ by design.
