@@ -36,14 +36,47 @@ Add this channel entry to your `channels.scm`, then pull.
 
 ## Using substitutes
 
-This channel serves pre-built binaries from a substitute server, so you do not
-build every package from source. A substitute is a pre-built binary that Guix
-downloads instead of compiling locally. To use the server, you authorize its
-signing key and add its URL.
+This channel serves pre-built binaries from a substitute server. A substitute is
+a pre-built binary that Guix downloads instead of a local build. To use the
+server, authorize its signing key and add its URL. The server carries only this
+channel's packages, so keep the default servers in the list.
 
-First, authorize the signing key. The server signs each substitute with this
-key, and Guix refuses a substitute from an unknown key. Run this command as
-root:
+Authorizing the key is an administrator task. Guix trusts the key at the daemon
+level, so a user without root cannot do it alone.
+
+### On Guix System
+
+Add the key and the URL to your `operating-system` configuration. Edit the
+`guix-service-type` configuration in the `services` field. Then reconfigure the
+system.
+
+```scheme
+;; Add (guix store) to your use-modules for %default-substitute-urls.
+(modify-services %base-services       ;or %desktop-services
+  (guix-service-type config =>
+   (guix-configuration
+    (inherit config)
+    (substitute-urls
+     (cons "https://cdn.interleaved.io/guix" %default-substitute-urls))
+    (authorized-keys
+     (cons (plain-file "interleaved-substitutes.pub"
+                       "(public-key
+ (ecc
+  (curve Ed25519)
+  (q #E5A0FA6C24D529F897F4CFA76DB18DBEB2D373B0E80B5B5F3FC243ECC6A3C99C#)))")
+           %default-authorized-guix-keys)))))
+```
+
+Reconfigure the system to apply it:
+
+```
+sudo guix system reconfigure /etc/system.scm
+```
+
+### On a foreign distribution
+
+Authorize the signing key as root. Guix refuses a substitute from an unknown
+key.
 
 ```
 guix archive --authorize <<EOF
@@ -56,17 +89,57 @@ guix archive --authorize <<EOF
 EOF
 ```
 
-Then add the substitute URL. Pass it to a build alongside the default server:
-
-```
-guix build tracer \
-  --substitute-urls='https://ci.guix.gnu.org https://cdn.interleaved.io/guix'
-```
-
-Keep `https://ci.guix.gnu.org` in the list, because this server carries only
-the channel's own packages. To make the change permanent, add the URL to the
-guix-daemon substitute URLs. See the Guix manual section on substitute server
+Then add the URL to the guix-daemon. Pass
+`--substitute-urls='https://ci.guix.gnu.org https://cdn.interleaved.io/guix'` to
+the daemon. Then restart it. See the Guix manual section on substitute server
 authorization.
+
+## Installing packages
+
+After you add the channel and run `guix pull`, Guix knows the packages by name.
+The channel provides `font-nerd-victor-mono`, `font-nerd-hack`, and `tracer`.
+
+Install one package into your profile:
+
+```
+guix install font-nerd-victor-mono
+```
+
+For a standing order, list the packages in a manifest or a Guix Home
+configuration.
+
+Use a manifest file at `~/manifest.scm`:
+
+```scheme
+(specifications->manifest
+ (list "font-nerd-victor-mono"
+       "font-nerd-hack"))
+```
+
+Apply the manifest:
+
+```
+guix package -m ~/manifest.scm
+```
+
+Use a Guix Home configuration at `~/guix-home-config.scm`:
+
+```scheme
+(use-modules (gnu home)
+             (gnu packages))
+
+(home-environment
+ (packages
+  (specifications->packages
+   (list "font-nerd-victor-mono"
+         "font-nerd-hack"))))
+```
+
+Apply the home configuration:
+
+```
+guix home reconfigure ~/guix-home-config.scm
+```
 
 ## Build status
 
