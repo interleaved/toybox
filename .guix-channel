@@ -3,4 +3,5 @@
 ;; separate from the helper scripts (channels.scm, manifest.scm) at the root.
 (channel
   (version 0)
-  (directory "modules"))
+  (directory "modules")
+  (news-file "news.scm"))
