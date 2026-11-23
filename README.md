@@ -25,8 +25,9 @@ Add this channel entry to your `channels.scm`, then pull.
 
 ```scheme
 (channel
-  (name 'interleaved)
+  (name 'toybox)
   (url "https://github.com/interleaved/toybox.git")
+  (branch "main")
   (introduction
    (make-channel-introduction
     "ee66ea930e97611f69d9842e81321f86e1476c34"
@@ -46,25 +47,20 @@ level, so a user without root cannot do it alone.
 
 ### On Guix System
 
-Add the key and the URL to your `operating-system` configuration. Edit the
-`guix-service-type` configuration in the `services` field. Then reconfigure the
-system.
+Add a service to the `services` field of your `operating-system`. It extends the
+Guix service with the substitute URL and the signing key, on top of the
+defaults. Then reconfigure the system.
 
 ```scheme
-;; Add (guix store) to your use-modules for %default-substitute-urls.
-(modify-services %base-services       ;or %desktop-services
-  (guix-service-type config =>
-   (guix-configuration
-    (inherit config)
-    (substitute-urls
-     (cons "https://cdn.interleaved.io/guix" %default-substitute-urls))
-    (authorized-keys
-     (cons (plain-file "interleaved-substitutes.pub"
-                       "(public-key
+(simple-service 'toybox-substitutes guix-service-type
+  (guix-extension
+   (substitute-urls (list "https://cdn.interleaved.io/guix"))
+   (authorized-keys
+    (list (plain-file "toybox-substitutes.pub"
+                      "(public-key
  (ecc
   (curve Ed25519)
-  (q #E5A0FA6C24D529F897F4CFA76DB18DBEB2D373B0E80B5B5F3FC243ECC6A3C99C#)))")
-           %default-authorized-guix-keys)))))
+  (q #E5A0FA6C24D529F897F4CFA76DB18DBEB2D373B0E80B5B5F3FC243ECC6A3C99C#)))")))))
 ```
 
 Reconfigure the system to apply it:
